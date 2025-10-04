@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { motion } from "framer-motion";
 import Checkbox from "@/components/atoms/Checkbox";
 import Button from "@/components/atoms/Button";
@@ -8,7 +8,7 @@ import TaskEditModal from "@/components/molecules/TaskEditModal";
 import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
 
-const TaskCard = ({ task, onToggle, onDelete, onUpdate }) => {
+const TaskCard = forwardRef(({ task, onToggle, onDelete, onUpdate }, ref) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleSave = (updates) => {
@@ -16,9 +16,10 @@ const TaskCard = ({ task, onToggle, onDelete, onUpdate }) => {
     setIsEditing(false);
   };
 
-  return (
+return (
     <>
       <motion.div
+        ref={ref}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
@@ -76,8 +77,10 @@ const TaskCard = ({ task, onToggle, onDelete, onUpdate }) => {
           onClose={() => setIsEditing(false)}
         />
       )}
-    </>
+</>
   );
-};
+});
+
+TaskCard.displayName = 'TaskCard';
 
 export default TaskCard;
