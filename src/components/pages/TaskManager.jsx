@@ -20,14 +20,29 @@ const TaskManager = () => {
 const { logout } = useContext(AuthContext);
 
   // Check authentication before any hooks to comply with Rules of Hooks
-  if (!isAuthenticated) {
-    return null;
-  }
+// All hooks must be called at the top, before any early returns
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeFilter, setActiveFilter] = useState("all");
   const [deletedTask, setDeletedTask] = useState(null);
+
+  // Authentication redirect effect
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Load tasks effect
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  // Early return AFTER all hooks
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const loadTasks = async () => {
     try {
@@ -42,9 +57,6 @@ const { logout } = useContext(AuthContext);
     }
   };
 
-  useEffect(() => {
-    loadTasks();
-  }, []);
 
 const handleAddTask = async (title_c) => {
     try {
@@ -132,14 +144,8 @@ let filtered = tasks.filter((t) => t.completed_c === completed);
   const activeTasks = getFilteredTasks(false);
   const completedTasks = getFilteredTasks(true);
 
-  if (loading) return <Loading />;
+if (loading) return <Loading />;
   if (error) return <Error message={error} onRetry={loadTasks} />;
-
-useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen bg-background">
