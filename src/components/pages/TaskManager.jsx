@@ -17,7 +17,12 @@ import Button from "@/components/atoms/Button";
 const TaskManager = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useSelector((state) => state.user);
-  const { logout } = useContext(AuthContext);
+const { logout } = useContext(AuthContext);
+
+  // Check authentication before any hooks to comply with Rules of Hooks
+  if (!isAuthenticated) {
+    return null;
+  }
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -135,10 +140,6 @@ useEffect(() => {
       navigate('/login');
     }
   }, [isAuthenticated, navigate]);
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen bg-background">
