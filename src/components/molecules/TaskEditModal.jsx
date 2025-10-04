@@ -5,17 +5,17 @@ import Button from "@/components/atoms/Button";
 import ApperIcon from "@/components/ApperIcon";
 
 const TaskEditModal = ({ task, onSave, onClose }) => {
-  const [title, setTitle] = useState(task.title);
-  const [dueDate, setDueDate] = useState(task.dueDate || "");
-  const [priority, setPriority] = useState(task.priority);
+const [title, setTitle] = useState(task.title_c);
+  const [dueDate, setDueDate] = useState(task.due_date_c || "");
+  const [priority, setPriority] = useState(task.priority_c);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (title.trim()) {
       onSave({
-        title: title.trim(),
-        dueDate: dueDate || null,
-        priority,
+title_c: title.trim(),
+        due_date_c: dueDate || null,
+        priority_c: priority,
       });
     }
   };

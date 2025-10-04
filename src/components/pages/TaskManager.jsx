@@ -1,15 +1,23 @@
-import { useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import { taskService } from "@/services/api/taskService";
+import { AuthContext } from "../../App";
+import ApperIcon from "@/components/ApperIcon";
 import TaskInput from "@/components/molecules/TaskInput";
 import FilterButtons from "@/components/molecules/FilterButtons";
-import TaskList from "@/components/organisms/TaskList";
-import CompletedSection from "@/components/organisms/CompletedSection";
-import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
-import { taskService } from "@/services/api/taskService";
+import Loading from "@/components/ui/Loading";
+import CompletedSection from "@/components/organisms/CompletedSection";
+import TaskList from "@/components/organisms/TaskList";
+import Button from "@/components/atoms/Button";
 
 const TaskManager = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useSelector((state) => state.user);
+  const { logout } = useContext(AuthContext);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,13 +41,13 @@ const TaskManager = () => {
     loadTasks();
   }, []);
 
-  const handleAddTask = async (title) => {
+const handleAddTask = async (title_c) => {
     try {
       const newTask = await taskService.create({
-        title,
-        completed: false,
-        priority: "medium",
-        dueDate: null,
+        title_c,
+        completed_c: false,
+        priority_c: "medium",
+        due_date_c: null,
       });
       setTasks([newTask, ...tasks]);
       toast.success("Task added successfully!");
@@ -48,12 +56,12 @@ const TaskManager = () => {
     }
   };
 
-  const handleToggleComplete = async (id) => {
+const handleToggleComplete = async (id) => {
     try {
       const updatedTask = await taskService.toggleComplete(id);
       setTasks(tasks.map((t) => (t.Id === id ? updatedTask : t)));
       toast.success(
-        updatedTask.completed ? "Task completed! 🎉" : "Task reopened"
+        updatedTask.completed_c ? "Task completed! 🎉" : "Task reopened"
       );
     } catch (err) {
       toast.error("Failed to update task");
@@ -107,10 +115,10 @@ const TaskManager = () => {
   };
 
   const getFilteredTasks = (completed) => {
-    let filtered = tasks.filter((t) => t.completed === completed);
+let filtered = tasks.filter((t) => t.completed_c === completed);
 
     if (activeFilter !== "all") {
-      filtered = filtered.filter((t) => t.priority === activeFilter);
+      filtered = filtered.filter((t) => t.priority_c === activeFilter);
     }
 
     return filtered;
@@ -121,6 +129,16 @@ const TaskManager = () => {
 
   if (loading) return <Loading />;
   if (error) return <Error message={error} onRetry={loadTasks} />;
+
+useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -141,12 +159,25 @@ const TaskManager = () => {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 text-center"
+          className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">TaskFlow</h1>
-          <p className="text-gray-600">
-            Your minimal task manager for maximum productivity
-          </p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">TaskFlow</h1>
+              <p className="text-gray-600">
+                Your minimal task manager for maximum productivity
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={logout}
+              className="flex items-center gap-2"
+            >
+              <ApperIcon name="LogOut" size={18} />
+              Logout
+            </Button>
+          </div>
         </motion.div>
 
         <div className="space-y-6">

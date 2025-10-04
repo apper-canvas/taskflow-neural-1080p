@@ -31,30 +31,30 @@ return (
       >
         <div className="flex items-start gap-4">
           <Checkbox
-            checked={task.completed}
+checked={task.completed_c}
             onChange={() => onToggle(task.Id)}
           />
 
           <div
             className="flex-1 cursor-pointer"
-            onClick={() => !task.completed && setIsEditing(true)}
+onClick={() => !task.completed_c && setIsEditing(true)}
           >
             <div className="flex items-start gap-3 mb-3">
-              <PriorityDot priority={task.priority} className="mt-1.5" />
+<PriorityDot priority={task.priority_c} className="mt-1.5" />
               <motion.h3
                 className={cn(
                   "text-base font-medium text-gray-900 flex-1",
-                  task.completed && "line-through text-gray-500"
+                  task.completed_c && "line-through text-gray-500"
                 )}
-                animate={task.completed ? { opacity: 0.6 } : { opacity: 1 }}
+                animate={task.completed_c ? { opacity: 0.6 } : { opacity: 1 }}
               >
-                {task.title}
+                {task.title_c}
               </motion.h3>
             </div>
 
-            {task.dueDate && (
+{task.due_date_c && (
               <div className="flex items-center gap-3 ml-5">
-                <DateBadge date={task.dueDate} />
+                <DateBadge date={task.due_date_c} />
               </div>
             )}
           </div>
